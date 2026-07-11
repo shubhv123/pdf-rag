@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DocQuery — AI Document Q&A</title>
+  <meta name="description" content="Upload PDF or text documents and ask questions using AI-powered Retrieval-Augmented Generation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ── Header ─────────────────────────────────────────────────── -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-bracket">[</span>
+        DocQuery
+        <span class="logo-bracket">]</span>
+      </div>
+      <div class="header-sub">AI-powered document intelligence</div>
+    </div>
+  </header>
+
+  <!-- ── Main Layout ────────────────────────────────────────────── -->
+  <main class="layout">
+
+    <!-- LEFT — Upload Panel -->
+    <section class="panel panel-upload" aria-label="Document Upload">
+      <h2 class="panel-title">01 / Upload</h2>
+
+      <div
+        id="drop-zone"
+        class="drop-zone"
+        role="button"
+        tabindex="0"
+        aria-label="Drop a PDF or text file here to upload"
+      >
+        <div class="drop-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="drop-label">Drop file here</p>
+        <p class="drop-sub">or <button class="link-btn" id="browse-btn">browse</button></p>
+        <p class="drop-types">PDF · TXT · MD — max 20 MB</p>
+        <input type="file" id="file-input" accept=".pdf,.txt,.md" hidden />
+      </div>
+
+      <!-- Upload progress / status -->
+      <div id="upload-status" class="upload-status" hidden>
+        <div class="status-bar-track">
+          <div class="status-bar-fill" id="status-bar"></div>
+        </div>
+        <p id="status-text" class="status-text"></p>
+      </div>
+
+      <!-- Uploaded documents list -->
+      <div id="doc-list" class="doc-list" hidden>
+        <h3 class="doc-list-title">Indexed documents</h3>
+        <ul id="doc-items" class="doc-items"></ul>
+      </div>
+    </section>
+
+    <!-- RIGHT — Chat Panel -->
+    <section class="panel panel-chat" aria-label="Question & Answer">
+      <h2 class="panel-title">02 / Ask</h2>
+
+      <!-- Empty state -->
+      <div id="empty-state" class="empty-state">
+        <div class="empty-grid" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <p>Upload a document to begin asking questions.</p>
+      </div>
+
+      <!-- Chat messages -->
+      <div id="chat-messages" class="chat-messages" hidden></div>
+
+      <!-- Input -->
+      <form id="chat-form" class="chat-form" hidden autocomplete="off">
+        <textarea
+          id="question-input"
+          class="question-input"
+          placeholder="Ask a question about your document…"
+          rows="1"
+          aria-label="Question input"
+        ></textarea>
+        <button type="submit" class="send-btn" id="send-btn" aria-label="Send question">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- ── Source Modal ────────────────────────────────────────────── -->
+  <div id="source-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-title">Source Chunks</h3>
+        <button class="modal-close" id="modal-close" aria-label="Close sources">✕</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
