@@ -8,8 +8,6 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pathlib import Path
-
 from app.routes import upload, query
 from app.config import settings
 

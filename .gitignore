@@ -42,3 +42,5 @@ vector_store/
 .pytest_cache/
 htmlcov/
 .coverage
+# DriftZero Caches & Runtime Artifacts
+golden.json
