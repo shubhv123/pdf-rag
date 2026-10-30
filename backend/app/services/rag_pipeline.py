@@ -8,7 +8,6 @@ import logging
 from typing import Tuple, List
 from functools import lru_cache
 
-import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 from app.config import settings
@@ -54,6 +53,7 @@ def _build_prompt(context: str, question: str) -> str:
 
 def _call_llm(prompt: str) -> str:
     """Run inference locally on CPU using Beam Search for descriptive answers."""
+    import torch
     model, tokenizer = get_local_model_and_tokenizer()
     logger.info("Running local beam search inference...")
     

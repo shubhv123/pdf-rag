@@ -7,7 +7,7 @@ Uses `sentence-transformers/all-MiniLM-L6-v2` locally (no API key needed).
 import logging
 from functools import lru_cache
 
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain.embeddings import HuggingFaceEmbeddings
 
 from app.config import settings
 

@@ -8,8 +8,19 @@ import logging
 from pathlib import Path
 from typing import List
 
-from langchain_core.documents import Document
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+# ── LangChain imports with graceful fallback ──────────────────────────────────
+try:
+    from langchain.documents import Document
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
+    _LANGCHAIN_AVAILABLE = True
+except ImportError:
+    _LANGCHAIN_AVAILABLE = False
+    Document = None  # type: ignore
+    RecursiveCharacterTextSplitter = None  # type: ignore
+    logging.getLogger(__name__).warning(
+        "LangChain not available — document processing will not work. "
+        "Install with: pip install langchain"
+    )
 
 from app.config import settings
 
@@ -57,6 +68,8 @@ def _clean_text(text: str) -> str:
 
 def _parse_pdf(file_path: Path) -> List[Document]:
     """Extract text page-by-page from a PDF, using PyMuPDF or pypdf as fallback."""
+    if not _LANGCHAIN_AVAILABLE:
+        raise RuntimeError("LangChain is not installed. Please install langchain to parse documents.")
     if _PYMUPDF:
         docs: List[Document] = []
         with fitz.open(str(file_path)) as pdf:
@@ -98,6 +111,8 @@ def _parse_pdf(file_path: Path) -> List[Document]:
 
 def _parse_text(file_path: Path) -> List[Document]:
     """Read and clean a plain text file as a single Document."""
+    if not _LANGCHAIN_AVAILABLE:
+        raise RuntimeError("LangChain is not installed. Please install langchain to parse documents.")
     raw_text = file_path.read_text(encoding="utf-8", errors="replace").strip()
     text = _clean_text(raw_text)
     if not text:
@@ -117,6 +132,8 @@ def parse_document(file_path: Path) -> List[Document]:
     Parse a document into raw LangChain Documents.
     Supports .pdf and plain text formats (.txt, .md, etc.).
     """
+    if not _LANGCHAIN_AVAILABLE:
+        raise RuntimeError("LangChain is not installed. Please install langchain to parse documents.")
     suffix = file_path.suffix.lower()
     if suffix == ".pdf":
         return _parse_pdf(file_path)
@@ -130,6 +147,8 @@ def chunk_documents(documents: List[Document]) -> List[Document]:
     Prioritizes splitting on logical paragraph boundaries (\\n\\n) and
     sentence boundaries (. , ? , !) before falling back to spaces or characters.
     """
+    if not _LANGCHAIN_AVAILABLE:
+        raise RuntimeError("LangChain is not installed. Please install langchain to chunk documents.")
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=settings.chunk_size,
         chunk_overlap=settings.chunk_overlap,
@@ -150,6 +169,8 @@ def process_file(file_path: Path) -> List[Document]:
     End-to-end: parse file → chunk.
     Returns a list of chunked LangChain Documents ready for embedding.
     """
+    if not _LANGCHAIN_AVAILABLE:
+        raise RuntimeError("LangChain is not installed. Please install langchain to process files.")
     raw_docs = parse_document(file_path)
     if not raw_docs:
         raise ValueError(f"No text content could be extracted from '{file_path.name}'.")
